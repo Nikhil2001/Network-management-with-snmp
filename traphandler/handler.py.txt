@@ -1,0 +1,5 @@
+import time
+import fileinput 
+for line in fileinput.input():  
+        print time.ctime(),line,"EOL"  
+

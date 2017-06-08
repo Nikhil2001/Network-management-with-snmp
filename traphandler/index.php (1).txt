@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html>
+<body>
+  
+<h1>SNMP MANAGER</h1>
+
+ 
+<?php
+$servername = "localhost";
+$username = "newuser";
+$password = "password";
+
+// Create connection
+$con = new mysqli($servername, $username, $password);
+
+// Check connection
+if ($con->connect_error) {
+    die("Connection failed: " . $con->connect_error);
+}
+//echo "Connected successfully";
+
+$result = "USE TEST_DB";
+
+echo "<table border='1'>
+<tr>
+<th>FQDN</th>
+<th>CURRENT_STATUS</th>
+<th>CURRENT_UNIXTIME</th>
+<th>PREVIOUS_STATUS</th>
+<th>PREVIOUS_UNIXTIME</th>
+</tr>";
+$result1= "SELECT * FROM TRAP2";
+//$result2=mysqli_query($con, $result1)
+if (mysqli_query($con, $result)) {
+  //  echo "Database created successfully";
+} else {
+    echo "Error creating database: " . mysqli_error($conn);
+}
+$result2=mysqli_query($con, $result1);
+while($row = mysqli_fetch_array($result2,MYSQLI_ASSOC))
+{
+if ($row['CURRENT_STATUS']==0)
+{
+    $row['CURRENT_STATUS']="OK";
+}
+
+if ($row['PREVIOUS_STATUS']==0)
+{
+    $row['PREVIOUS_STATUS']="OK";
+}
+
+if ($row['CURRENT_STATUS']==1)
+{
+    $row['CURRENT_STATUS']="problem";
+}
+if ($row['PREVIOUS_STATUS']==1)
+{
+    $row['PREVIOUS_STATUS']="problem";
+}
+
+
+if ($row['CURRENT_STATUS']==2)
+{
+    $row['CURRENT_STATUS']="danger";
+}
+if ($row['PREVIOUS_STATUS']==2)
+{
+    $row['PREVIOUS_STATUS']="danger";
+}
+
+if ($row['CURRENT_STATUS']==3)
+{
+    $row['CURRENT_STATUS']="fail";
+}
+if ($row['PREVIOUS_STATUS']==3)
+{
+    $row['PREVIOUS_STATUS']="fail";
+}
+echo "<tr>";
+echo "<td>" . $row['FQDN'] . "</td>";
+echo "<td>" . $row['CURRENT_STATUS'] . "</td>";
+echo "<td>" . $row['CURRENT_STATUS_UNIXTIME'] . "</td>";
+echo "<td>" . $row['PREVIOUS_STATUS'] . "</td>";
+echo "<td>" . $row['PREVIOUS_STATUS_UNIXTIME'] . "</td>";
+echo "</tr>";
+}
+echo "</table>";
+
+
+///mysqli_close($conn);
+#header("Refresh:2; url=1.php");
+php?>
+   
+
+<h3>ENTER IP ADDRESS,PORT AND COMMUNITY </h3>
+<form action="main.php" method="POST">
+  IP:PORT<br>
+  <input type="text" name="ip" required>
+  <br>
+  community:<br>
+  <input type="text" name="community" required>
+  <br><br>
+  <input type="submit" value="send">
+</form> 
+</body>
+</html>
+
+<?php
+$name = $_POST["ip"];
+$community = $_POST["community"];
+if (isset($_POST["ip"],$_POST["community"])) {
+$sql = 'CREATE TABLE IF NOT EXISTS SENDTRAP (IP VARCHAR(20),COMMUNITY  VARCHAR(20))';
+mysqli_query($con, $sql);
+$sql1 = 'DELETE FROM SENDTRAP';
+mysqli_query($con, $sql1);
+$ins = "INSERT INTO SENDTRAP (IP, COMMUNITY)VALUES('$name','$community')";
+mysqli_query($con, $ins);
+}
+mysqli_close($conn);
+?>
