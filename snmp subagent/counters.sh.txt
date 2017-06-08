@@ -1,0 +1,7 @@
+#!bin/bash
+ 
+echo "Here C is the bitrate of the process [0,10e9] bit/second\n\n" >COUNTERS.conf
+awk 'BEGIN { print "---------------------------------------------------------------------------------">>"COUNTERS.conf";}'
+awk 'BEGIN { print "ID\t\t ","C","\t\t\tDESCRIPTION\n---------------------------------------------------------------------------------">>"COUNTERS.conf";}'
+awk -v var=$1 'BEGIN { i=1;while(i<=var) {z=int((10^9+1) * rand());print i,"\t\t",z,"\t\tfor counter",i," c=",z/(10^6),"Mbps">>"COUNTERS.conf";i++} }'
+
