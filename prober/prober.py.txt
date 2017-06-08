@@ -1,0 +1,117 @@
+import time
+import subprocess
+import sys
+total = len(sys.argv)
+p_args= sys.argv
+#print total
+#print p_args
+c=[]
+#############above arguments are listed#######################
+
+string1= "snmpget -v 2c -c";
+string1=string1.split(" ")
+
+string2= (sys.argv[1]).rsplit(":",1)
+p_args.insert(3,'1.3.6.1.2.1.1.3.0')
+#print p_args
+#string3 =" ".join(p_args[3:])
+sample1  =  int(p_args[2])
+#final =" ".join([string1,string2[1],string2[0],string3])
+final = string1+[string2[1],string2[0]]+p_args[3:]
+##########################code for initial probe is below ######
+##########################while loop because this loop breaks only when it get values for first time  ######
+
+while True:
+  oid_list=[]
+  proc = subprocess.Popen(final, stdout=subprocess.PIPE)
+  sys.stdout.flush()
+  for line in iter(proc.stdout.readline,''):
+  		  l=line.rstrip()
+		  oid_list.append(l)
+  if  oid_list:
+        
+    #list =[i - j for i, j in zip(a, b)]
+  	oid_only = [item.split(" = ")[0] for item in oid_list]
+  	del oid_only[0]
+  	value_oid_f = [item.split(": ")[1] for item in oid_list]
+  	sys_up_value=value_oid_f[0]
+  	del value_oid_f[0]
+  	sys_up_value=value_oid_f[0]
+  	s=sys_up_value.split(") ")[0]
+  	sys_initial=int(s[1:])/100
+  	value_oid = [int(item) for item in value_oid_f]
+	break;
+################################################################################
+#print final
+#value_oid = [0 for i in range(total-3)]
+#oid_list=[]
+c=0
+m=0
+#sys_initial=0
+file=open("/home/nikhil/anm2.txt","wb")
+
+###########sleep after 1st probe and the probe again ,calculate rate and then repeat from sleep######################
+while(True)
+	time.sleep(sample1)
+	oid_list=[]
+#	print "Start : %s" % time.ctime()
+        #time.sleep(sample)
+####################prober string ready####################import subprocess
+	proc = subprocess.Popen(final, stdout=subprocess.PIPE)
+        sys.stdout.flush()
+  	for line in iter(proc.stdout.readline,''):
+  		  l=line.rstrip()
+		  oid_list.append(l)
+ #       print oid_list
+#        print "break? : %s" % time.ctime()
+	if not oid_list:
+	     if k:
+                c=0
+                k=0  
+             c=c+1
+############################prober list is ready########################
+        if  oid_list:
+	 k=1
+	 #list =[i - j for i, j in zip(a, b)]
+	 oid_only = [item.split(" = ")[0] for item in oid_list]
+	 sys_up_oid=oid_only[0]
+	 del oid_only[0]
+#	 print oid_only
+	 value_oid_f = [item.split(": ")[1] for item in oid_list]
+#	 print value_oid
+	 sys_up_value=value_oid_f[0]
+	 s=sys_up_value.split(") ")[0]
+	 sys_final=int(s[1:])/100
+	 del value_oid_f[0]
+
+	 sample=sys_final-sys_initial
+         if sample<0:
+            sample=c*(6+sample1)+sample1
+	 sys_initial=sys_final
+         value_oid_ci = [int(item) for item in value_oid_f]
+
+########################################################################
+         rate =[(i - j)/(sample) for i, j in zip(value_oid_ci,value_oid)]
+
+	 l=[]
+         value_oid=value_oid_ci
+      
+	 for value in rate:
+		if value>=0:
+		 	l.append(value)
+		if value<0:
+			value=value+(2**32/sample)
+		#	print "counter wrap"
+			l.append(value)
+         final_c =["rate of change of OID "+i+" = %d"%j for i, j in zip(oid_only,l)]
+	 #print final_c       
+	 for value in  final_c :
+		print value
+	        sys.stdout.flush()
+         
+#
+
+
+
+
+
