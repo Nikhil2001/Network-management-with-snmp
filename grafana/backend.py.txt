@@ -1,0 +1,19 @@
+import sys
+import subprocess
+#print sys.argv
+del sys.argv[0]
+sys.argv.insert(0,'python')
+sys.argv.insert(1,'prober.py')
+#print sys.argv
+subprocess.Popen("curl -i -XPOST http://localhost:8086/query --data-urlencode 'q=CREATE DATABASE mydb1'",shell=True)
+
+
+proc = subprocess.Popen(sys.argv,stdout=subprocess.PIPE)
+for line in iter(proc.stdout.readline,''):
+    l= line.rstrip()
+    print l
+    k= l.split("rate of change of OID ")
+    m=k[1].split(" = ")
+    print m
+    subprocess.Popen("curl -i -XPOST 'http://localhost:8086/write?db=mydb1' --data-binary 'rate,counter=%s value=%s'"%(m[0],m[1]),shell=True)
+
