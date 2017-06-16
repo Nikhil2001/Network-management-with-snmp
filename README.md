@@ -17,4 +17,5 @@ corresponding rates where inserted in INFLUXDB database and rates are
 observed in GRAFANA for rate visualisation/Graph
 
 prober and grafana folder contains scripts related to above topic
+
 3.Traphandler and Traplistning system was developed to manage devices using python 
