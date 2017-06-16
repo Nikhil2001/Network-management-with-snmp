@@ -15,7 +15,6 @@ snmp subagent folder contains scripts related to above topic
 2.Python scripts were written to calculate rate of each counter and the
 corresponding rates where inserted in INFLUXDB database and rates are
 observed in GRAFANA for rate visualisation/Graph
+.prober and grafana folder contains scripts related to above topic
 
-prober and grafana folder contains scripts related to above topic
-
-3.Traphandler and Traplistning system was developed to manage devices using python 
+3.Traphandler and Trap listening system was developed to manage devices using python 
